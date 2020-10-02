@@ -1,0 +1,80 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <a class="navbar-brand" href="#">
+    <img src="assets/img/Logo.png" width="110%" height="55%" class="d-inline-block align-top mx-4 m" alt="" loading="lazy" ></a>
+
+    <div class="collapse navbar-collapse" >
+            <ul class="navbar-nav px-5 mx-4" >   
+                <li class="nav-item mx-3">
+                    <a class="nav-link active" href="#"><strong>Home</strong></a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link active" href="#" (click)="getProductNew()" ><strong>Productos nuevos</strong></a>
+                </li>
+                <li class="nav-item mx-4 ">
+                    <a class="nav-link active" href="#" (click)="getChangedPrice()"><strong>Productos con cambio de precio</strong></a>
+                    
+                </li>
+                <li class="nav-item mx-3 ">
+                    <a class="nav-link active" href="https://bestwayapp.market/" ><strong>Ir a la cuenta</strong></a>
+                </li>
+                </ul>
+    </div>
+</nav>
+<div class="card-body">
+<p-toast></p-toast>
+<div class="card">
+    <p-toolbar styleClass="p-mb-4"></p-toolbar>
+
+    <p-table #dt [value]="products" [rows]="10" [paginator]="true" [globalFilterFields]="['name','country.name','representative.name','status']"
+        [(selection)]="selectedProducts" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+            <tr>
+        
+                <th pSortableColumn="name">Image<p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="price"> Name <p-sortIcon field="price"></p-sortIcon></th>
+                <th pSortableColumn="category">Precio de la tienda <p-sortIcon field="category"></p-sortIcon></th>
+                <th pSortableColumn="rating">Precio Home depot <p-sortIcon field="rating"></p-sortIcon></th>
+                <th pSortableColumn="inventoryStatus">Accion<p-sortIcon field="inventoryStatus"></p-sortIcon></th>
+               
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td><img [src]="product.info.imageUrl"  width="100" class="p-shadow-4" /></td>
+                <td>{{product.info.productLabel}}</td>
+                <td>{{product.sale_price?product.sale_price:product.storeSku.pricing.originalPrice}}</td>
+                <td>{{product.storeSku.pricing.specialPrice}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                Total  {{products ? products.length : 0 }} productos.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <img [src]="'assets/showcase/images/demo/product/' + product.image" [alt]="product.image" class="product-image" *ngIf="product.image">  
+        <div class="p-formgrid p-grid">
+            <div class="p-field p-col">
+                <label for="price">Price</label> <!-- se modifica el precio -->
+                <p-inputNumber id="price" [(ngModel)]="product.sale_price" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+            </div>
+
+        </div>
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
